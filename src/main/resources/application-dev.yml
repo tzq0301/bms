@@ -1,0 +1,41 @@
+management:
+    endpoint:
+        health:
+            show-details: always
+    endpoints:
+        jmx:
+            exposure:
+                include: '*'
+        web:
+            exposure:
+                include: '*'
+    server:
+        port: 8081
+
+mybatis:
+    mapper-locations: classpath:mapper/*xml
+
+server:
+    port: 8080
+    servlet:
+        context-path: /bms
+
+spring:
+    application:
+        name: bms
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://rm-bp1gcnt42xac41mmato.mysql.rds.aliyuncs.com:3306/bms
+        password: Tzq@mysql
+        username: tzq
+    thymeleaf:
+        cache: true
+        check-template: true
+        check-template-location: true
+        content-type: text/html
+        enabled: true
+        encoding: UTF-8
+        excluded-view-names: ''
+        mode: HTML
+        prefix: classpath:/templates/
+        suffix: .html

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tzq0301.bms.mapper.BookMapper">
+
+    <select id="findBookByTitle" resultType="cn.tzq0301.bms.entity.Book">
+        SELECT book_id, title, isbn, author, publisher, total_amount, left_amount, price
+        FROM book
+        <where>
+            <if test='title != null and title != ""'>
+                title = #{title}
+            </if>
+        </where>
+    </select>
+
+    <select id="findBookByIsbn" resultType="cn.tzq0301.bms.entity.Book">
+        SELECT book_id, title, isbn, author, publisher, total_amount, left_amount, price
+        FROM book
+        <where>
+            <if test='isbn != null and isbn != ""'>
+                isbn = #{isbn}
+            </if>
+        </where>
+    </select>
+
+    <select id="listAllBorrowableBooks" resultType="cn.tzq0301.bms.entity.Book">
+        SELECT book_id, title, isbn, author, publisher, total_amount, left_amount, price
+        FROM book
+        <where>
+            left_amount > 0
+        </where>
+    </select>
+
+    <select id="listBorrowedBooks" resultType="cn.tzq0301.bms.entity.Book">
+        SELECT book_id, title, isbn, author, publisher, total_amount, left_amount, price
+        FROM book
+        <where>
+            total_amount != left_amount
+        </where>
+    </select>
+
+    <select id="listAllBooks" resultType="cn.tzq0301.bms.entity.Book">
+        SELECT book_id, title, isbn, author, publisher, total_amount, left_amount, price
+        FROM book
+    </select>
+
+    <select id="countBookAmountByIsbn" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM book
+        <where>
+            isbn = #{isbn}
+        </where>
+    </select>
+
+    <insert id="saveBook" parameterType="cn.tzq0301.bms.entity.Book">
+        INSERT INTO book (book_id, title, isbn, author, publisher, total_amount, left_amount, price)
+        VALUES (#{bookId}, #{title}, #{isbn}, #{author}, #{publisher}, #{totalAmount}, #{leftAmount}, #{price})
+    </insert>
+
+    <delete id="removeBookByIsbn" parameterType="java.lang.String" flushCache="true">
+        DELETE
+        FROM book
+        WHERE isbn = #{isbn};
+    </delete>
+
+    <delete id="removeBorrowRecordByIsbn" parameterType="java.lang.String" flushCache="true">
+        DELETE
+        FROM borrow
+        WHERE book_id = (
+            SELECT book_id
+            FROM book
+            WHERE isbn = #{isbn}
+        );
+    </delete>
+
+    <select id="countBookLeftAmountByIsbn" resultType="java.lang.Integer">
+        SELECT left_amount
+        FROM book
+        <where>
+            <if test='isbn != null and isbn != ""'>
+                isbn = #{isbn}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateBookLeftAmountByIsbn">
+        UPDATE book
+        SET left_amount = left_amount - #{num}
+        WHERE isbn = #{isbn};
+    </update>
+
+</mapper>
